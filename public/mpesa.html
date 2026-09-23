@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Fee Payment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f4f8;
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .container {
+            background: white;
+            max-width: 480px;
+            width: 100%;
+            border-radius: 24px;
+            padding: 40px 28px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #059669, #0a6ebd);
+        }
+        
+        h2 {
+            font-size: 22px;
+            font-weight: 800;
+            color: #059669;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        
+        .greeting {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #475569;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .greeting strong {
+            display: block;
+            color: #0f172a;
+            font-size: 15px;
+            margin-top: 4px;
+        }
+        /* ---------- LOCATION / ZONE SELECTOR ---------- */
+        
+        .zone-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6b7280;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .zone-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .zone-option {
+            position: relative;
+            border: 2px solid #e2e8f0;
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 16px 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: border-color 0.2s, background 0.2s, transform 0.1s;
+            user-select: none;
+        }
+        
+        .zone-option:hover {
+            border-color: #a7f3d0;
+        }
+        
+        .zone-option:active {
+            transform: scale(0.98);
+        }
+        
+        .zone-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .zone-option .zone-icon {
+            font-size: 22px;
+            display: block;
+            margin-bottom: 6px;
+        }
+        
+        .zone-option .zone-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .zone-option .zone-price {
+            font-size: 15px;
+            font-weight: 900;
+            color: #059669;
+            display: block;
+        }
+        
+        .zone-option.selected {
+            border-color: #059669;
+            background: #f0fdf4;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+        }
+        /* ---------- FEE DISPLAY ---------- */
+        
+        .fee-display {
+            text-align: center;
+            background: #f0fdf4;
+            border: 2px solid #d1fae5;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 28px;
+        }
+        
+        .fee-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+        
+        .fee-amount {
+            font-size: 36px;
+            font-weight: 900;
+            color: #059669;
+        }
+        
+        .fee-amount small {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .fee-note {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-top: 6px;
+        }
+        
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 16px 18px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            outline: none;
+            transition: border 0.2s, background 0.2s;
+        }
+        
+        input:focus {
+            border-color: #059669;
+            background: white;
+        }
+        
+        input::placeholder {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: #059669;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary:hover {
+            background: #047857;
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-primary:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            color: #059669;
+            font-weight: 700;
+            font-size: 14px;
+            border: 2px solid #059669;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: none;
+            margin-top: 4px;
+        }
+        
+        .btn-secondary.show {
+            display: block;
+        }
+        
+        .btn-secondary:hover {
+            background: #f0fdf4;
+        }
+        
+        .status-badge {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 13px;
+            font-weight: 700;
+            min-height: 24px;
+        }
+        
+        .status-badge.success {
+            color: #059669;
+        }
+        
+        .status-badge.pending {
+            color: #d97706;
+        }
+        
+        .status-badge.failed {
+            color: #dc2626;
+        }
+        
+        .info-text {
+            text-align: center;
+            font-size: 13px;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal-box {
+            background: white;
+            max-width: 340px;
+            width: 100%;
+            border-radius: 20px;
+            padding: 32px 24px 24px;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 24px;
+        }
+        
+        .modal-icon.success {
+            background: #f0fdf4;
+            color: #059669;
+        }
+        
+        .modal-icon.failed {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .spinner {
+            width: 56px;
+            height: 56px;
+            border: 4px solid #059669;
+            border-top-color: transparent;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            animation: spin 0.9s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .modal-box h3 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+        
+        .modal-box p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #475569;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .modal-box .btn-primary {
+            margin-top: 4px;
+        }
+        
+        .chat-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #059669;
+            color: white;
+            padding: 14px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+            animation: bounce 2s infinite;
+            transition: transform 0.2s;
+        }
+        
+        .chat-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        @keyframes bounce {
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-6px);
+            }
+            60% {
+                transform: translateY(-3px);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 28px 18px;
+            }
+            h2 {
+                font-size: 18px;
+            }
+            .fee-amount {
+                font-size: 28px;
+            }
+            .zone-option {
+                padding: 14px 8px;
+            }
+            .zone-option .zone-name {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Delivery Fee</h2>
+
+        <div class="greeting">
+            Hi 👋 <span id="usernameDisplay">there</span>!
+            <strong>Pay the delivery fee to have your order shipped.</strong>
+        </div>
+
+        <!-- ===== DELIVERY ZONE SELECTOR ===== -->
+        <div class="zone-title">Select your delivery location</div>
+
+        <div class="zone-grid" id="zoneGrid">
+            <label class="zone-option" id="zoneInsideNairobi" data-zone="inside">
+                <input type="radio" name="deliveryZone" value="inside">
+                <span class="zone-icon">🏙️</span>
+                <span class="zone-name">Inside Nairobi</span>
+                <span class="zone-price">KSh 500</span>
+            </label>
+
+            <label class="zone-option" id="zoneOutsideNairobi" data-zone="outside">
+                <input type="radio" name="deliveryZone" value="outside">
+                <span class="zone-icon">🛣️</span>
+                <span class="zone-name">Outside Nairobi</span>
+                <span class="zone-price">KSh 1,000</span>
+            </label>
+        </div>
+
+        <div class="fee-display">
+            <div class="fee-label">Delivery Fee</div>
+            <div class="fee-amount">KSh <span id="feeAmount">0</span></div>
+            <div class="fee-note" id="feeNote">Choose a location above</div>
+        </div>
+
+        <form id="payForm">
+            <input type="text" id="senderName" placeholder="Enter your full name" required autocomplete="name">
+            <input type="tel" id="senderPhone" placeholder="Enter your M-Pesa number (07XXXXXXXX)" required autocomplete="tel">
+            <input type="text" id="deliveryAddress" placeholder="Delivery location / estate / town" required>
+
+            <button type="submit" class="btn-primary" id="payBtn">
+                Pay Now
+            </button>
+
+            <button type="button" class="btn-secondary" id="retryBtn">Retry Payment</button>
+        </form>
+
+        <div class="status-badge" id="statusBadge"></div>
+
+        <div class="info-text">
+            Please wait a few minutes for your payment to be processed. You will be automatically redirected once confirmed.
+        </div>
+    </div>
+
+    <!-- ===== STEP MODAL ===== -->
+    <div class="modal-overlay" id="stepModal">
+        <div class="modal-box">
+            <div id="step-pin" class="hidden">
+                <div class="modal-icon success">
+                    <span>🔒</span>
+                </div>
+                <h3>Confirm Payment</h3>
+                <p style="text-align:center;">
+                    Enter your M-Pesa PIN on the prompt sent to your phone.<br><br>
+                    <strong>Amount: KSh <span id="confirmFee">---</span></strong>
+                </p>
+                <button onclick="handlePinConfirmed()" class="btn-primary" style="margin-top:4px;">
+                    I've Entered My PIN
+                </button>
+                <button onclick="closeStepModal()" class="btn-secondary show" style="margin-top:8px;">
+                    Cancel
+                </button>
+            </div>
+
+            <div id="step-spinner" class="hidden">
+                <div class="spinner"></div>
+                <h3>Processing Payment...</h3>
+                <p style="text-align:center;">Checking M-Pesa response. Please wait.</p>
+                <button onclick="showPaymentChoices()" class="btn-primary" style="margin-top:12px;">
+                    Check Payment Status
+                </button>
+            </div>
+
+            <div id="step-success" class="hidden">
+                <div class="modal-icon success">
+                    <span>✓</span>
+                </div>
+                <h3>Payment Received!</h3>
+                <p id="finalMessage" style="text-align:center;">
+                    Your delivery fee has been received.<br> Your order is being processed.
+                </p>
+                <button onclick="handleSuccessOk()" class="btn-primary" style="margin-top:4px;">
+                    OK
+                </button>
+            </div>
+
+            <div id="step-failed" class="hidden">
+                <div class="modal-icon failed">
+                    <span>✗</span>
+                </div>
+                <h3>Payment Failed</h3>
+                <p style="text-align:center;">
+                    Your payment was not completed.<br> Please try again or contact support.
+                </p>
+                <button onclick="closeStepModal(); retryPayment();" class="btn-primary" style="margin-top:4px;">
+                    Try Again
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <a href="#" class="chat-btn" onclick="alert('Support: +254 700 000 000')">
+        💬 Chat with support
+    </a>
+
+    <script>
+        // ============================================================
+        // CONFIGURATION — DELIVERY FEES
+        // ============================================================
+        var DELIVERY_FEES = {
+            inside: 500, // Inside Nairobi
+            outside: 1000 // Outside Nairobi
+        };
+
+        // Where to send the user after a successful payment.
+        // Leave as '' to stay on this page after success.
+        var NEXT_PAGE = '';
+
+        var REDIRECT_DELAY_MS = 5000;
+        var paymentCompleted = false;
+        var globalCheckoutRef = null;
+        var pollInterval = null;
+        var stkPhone = '';
+        var stkAmount = 0;
+        var selectedZone = null;
+
+        // ============================================================
+        // LOAD USER FROM LOCAL STORAGE
+        // ============================================================
+        var users = JSON.parse(localStorage.getItem('nyota_users') || '[]');
+        var userPhone = localStorage.getItem('userPhone');
+
+        // Fall back to a phone saved by a previous step (e.g. signup/delivery form)
+        if (!userPhone) {
+            userPhone = localStorage.getItem('phone') || localStorage.getItem('deliveryPhone') || '';
+        }
+
+        var currentUser = null;
+        for (var u = 0; u < users.length; u++) {
+            if (users[u].phone === userPhone) {
+                currentUser = users[u];
+                break;
+            }
+        }
+
+        var userName = (currentUser && currentUser.fullname) ?
+            currentUser.fullname.toUpperCase() :
+            (localStorage.getItem('fullname') || '').toUpperCase() || 'there';
+
+        document.getElementById('usernameDisplay').textContent = userName;
+
+        // Pre-fill name / phone if we already know them
+        if (currentUser && currentUser.fullname) {
+            document.getElementById('senderName').value = currentUser.fullname;
+        }
+        if (userPhone) {
+            document.getElementById('senderPhone').value = formatPhoneForPayHero(userPhone);
+        }
+
+        // ============================================================
+        // HELPERS
+        // ============================================================
+        function formatPhoneForPayHero(phone) {
+            phone = (phone || '').replace(/\D/g, '');
+            if (phone.startsWith('254')) {
+                return '0' + phone.substring(3);
+            }
+            if (phone.startsWith('0')) {
+                return phone;
+            }
+            if (phone.startsWith('7') || phone.startsWith('1')) {
+                return '0' + phone;
+            }
+            return phone;
+        }
+
+        function setStatus(msg, type) {
+            var b = document.getElementById('statusBadge');
+            b.textContent = msg;
+            b.className = 'status-badge ' + (type || '');
+        }
+
+        function closeStepModal() {
+            document.getElementById('stepModal').classList.remove('show');
+            var ids = ['step-pin', 'step-spinner', 'step-success', 'step-failed'];
+            for (var i = 0; i < ids.length; i++) {
+                document.getElementById(ids[i]).classList.add('hidden');
+            }
+        }
+
+        function showStep(id) {
+            var steps = ['step-pin', 'step-spinner', 'step-success', 'step-failed'];
+            for (var i = 0; i < steps.length; i++) {
+                var el = document.getElementById(steps[i]);
+                if (steps[i] === id) {
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            }
+            document.getElementById('stepModal').classList.add('show');
+        }
+
+        function stopPoll() {
+            if (pollInterval) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+            }
+        }
+
+        function retryPayment() {
+            document.getElementById('retryBtn').click();
+        }
+
+        // ============================================================
+        // ZONE SELECTION
+        // ============================================================
+        function getSelectedZone() {
+            var checked = document.querySelector('input[name="deliveryZone"]:checked');
+            return checked ? checked.value : null;
+        }
+
+        function getSelectedFee() {
+            var zone = getSelectedZone();
+            return zone ? DELIVERY_FEES[zone] : 0;
+        }
+
+        function applyZoneSelection() {
+            selectedZone = getSelectedZone();
+            var fee = getSelectedFee();
+
+            var insideEl = document.getElementById('zoneInsideNairobi');
+            var outsideEl = document.getElementById('zoneOutsideNairobi');
+            insideEl.classList.toggle('selected', selectedZone === 'inside');
+            outsideEl.classList.toggle('selected', selectedZone === 'outside');
+
+            document.getElementById('feeAmount').textContent = fee ? fee.toLocaleString('en-KE') : '0';
+            document.getElementById('feeNote').textContent = selectedZone === 'inside' ?
+                'Delivery within Nairobi (CBD & environs)' :
+                (selectedZone === 'outside' ? 'Delivery upcountry / outside Nairobi' : 'Choose a location above');
+
+            if (fee) {
+                localStorage.setItem('deliveryFee', String(fee));
+                localStorage.setItem('deliveryZone', selectedZone);
+            }
+        }
+
+        var zoneRadios = document.querySelectorAll('input[name="deliveryZone"]');
+        for (var z = 0; z < zoneRadios.length; z++) {
+            zoneRadios[z].addEventListener('change', applyZoneSelection);
+        }
+
+        // Restore a previously chosen zone
+        (function restoreZone() {
+            var saved = localStorage.getItem('deliveryZone');
+            if (saved && DELIVERY_FEES[saved] !== undefined) {
+                var radio = document.querySelector('input[name="deliveryZone"][value="' + saved + '"]');
+                if (radio) radio.checked = true;
+            }
+            applyZoneSelection();
+        })();
+
+        // ============================================================
+        // TRIGGER STK PUSH
+        // Sends ONE STK push. Never call this more than once per attempt.
+        // ============================================================
+        async function triggerSTKCall(note) {
+            try {
+                var phoneInput = document.getElementById('senderPhone').value;
+                if (!phoneInput || !stkAmount) {
+                    console.log('[STK] Skipping: missing phone or amount');
+                    return;
+                }
+
+                console.log('[STK] Trigger ' + note + ' - sending to /api/stk-push');
+
+                var response = await fetch('/api/stk-push', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        amount: Number(stkAmount),
+                        phone_number: phoneInput,
+                        zone: selectedZone,
+                        name: document.getElementById('senderName').value.trim(),
+                        address: document.getElementById('deliveryAddress').value.trim()
+                    })
+                });
+
+                var data = await response.json();
+                console.log('STK Push Response:', data);
+
+                if (!response.ok || data.success === false) {
+                    var msg = data.message || ('Payment could not be started (HTTP ' + response.status + ')');
+                    console.error('[STK] Rejected by server:', msg);
+                    setStatus("\uD83D\uDD34 " + msg, "failed");
+                    document.getElementById('retryBtn').classList.add('show');
+                    return data;
+                }
+
+                if (data.reference || data.CheckoutRequestID) {
+                    var ref = data.reference || data.CheckoutRequestID;
+                    globalCheckoutRef = ref;
+                    localStorage.setItem('payhero_ref', ref);
+                    setStatus("\uD83D\uDFE2 STK sent. Check your phone.", "pending");
+
+                    // Start polling after 5 seconds
+                    setTimeout(function() {
+                        if (!paymentCompleted && globalCheckoutRef) {
+                            pollPaymentStatus(globalCheckoutRef);
+                        }
+                    }, 5000);
+                }
+
+                return data;
+            } catch (error) {
+                console.error('STK Trigger Failed:', error);
+                setStatus("\uD83D\uDD34 STK Push failed: " + (error.message || 'Unknown error'), "failed");
+                document.getElementById('retryBtn').classList.add('show');
+            }
+        }
+
+        // ============================================================
+        // CHECK PAYMENT STATUS — EXACT PATTERN FROM FULIZA
+        // ============================================================
+        async function checkPaymentStatus(reference) {
+            try {
+                console.log('[Status] Checking ref:', reference);
+
+                var response = await fetch('/api/check-status?reference=' + encodeURIComponent(reference), {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                var responseText = await response.text();
+                console.log('[Status] Raw response:', responseText);
+
+                var data = {};
+                if (responseText && responseText.trim().length > 0) {
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (e) {
+                        console.error('[Status] JSON parse error:', e);
+                        return {
+                            success: false,
+                            status: 'QUEUED'
+                        };
+                    }
+                } else {
+                    return {
+                        success: false,
+                        status: 'QUEUED'
+                    };
+                }
+
+                console.log('[Status] Parsed data:', JSON.stringify(data, null, 2));
+
+                if (!response.ok) {
+                    throw new Error(data.message || ('Status check error: ' + response.status));
+                }
+
+                return data;
+            } catch (error) {
+                console.error('[Status] Check failed:', error);
+                return {
+                    success: false,
+                    status: 'QUEUED'
+                };
+            }
+        }
+
+        // ============================================================
+        // POLL PAYMENT STATUS
+        // ============================================================
+        function pollPaymentStatus(ref) {
+            stopPoll();
+            var attempts = 0;
+            var MAX = 24;
+
+            pollInterval = setInterval(async function() {
+                attempts++;
+                try {
+                    var data = await checkPaymentStatus(ref);
+                    var status = (data.status || '').toUpperCase();
+
+                    if (status === 'SUCCESS') {
+                        stopPoll();
+                        paymentCompleted = true;
+                        globalCheckoutRef = null;
+                        localStorage.setItem('deliveryFeePaid', 'yes');
+                        localStorage.removeItem('payhero_ref');
+                        setStatus('\u2705 Payment successful!', 'success');
+                        closeStepModal();
+                        showStep('step-success');
+                        document.getElementById('finalMessage').innerHTML =
+                            'Delivery fee of <strong>KES ' + stkAmount.toLocaleString('en-KE') +
+                            '</strong> received!<br>Your order is being processed.';
+                        goToNextPage();
+
+                    } else if (status === 'FAILED') {
+                        stopPoll();
+                        globalCheckoutRef = null;
+                        localStorage.removeItem('payhero_ref');
+                        setStatus('\uD83D\uDD34 Payment failed or cancelled', 'failed');
+                        closeStepModal();
+                        showStep('step-failed');
+
+                    } else {
+                        setStatus('\u23F3 Waiting for M-Pesa PIN entry...', 'pending');
+                    }
+                } catch (err) {
+                    console.error('[POLL] Error:', err);
+                }
+
+                if (attempts >= MAX) {
+                    stopPoll();
+                    globalCheckoutRef = null;
+                    setStatus('\u23F0 Payment timed out. Click Retry to try again.', 'failed');
+                    closeStepModal();
+                    showStep('step-failed');
+                    document.getElementById('retryBtn').classList.add('show');
+                }
+            }, 5000);
+        }
+
+        // ============================================================
+        // NAVIGATION AFTER SUCCESS
+        // ============================================================
+        function goToNextPage() {
+            if (NEXT_PAGE) {
+                setTimeout(function() {
+                    window.location.href = NEXT_PAGE;
+                }, REDIRECT_DELAY_MS);
+            }
+        }
+
+        // ============================================================
+        // FORM SUBMIT — TRIGGER 1
+        // ============================================================
+        var form = document.getElementById('payForm');
+        var payBtn = document.getElementById('payBtn');
+        var retryBtn = document.getElementById('retryBtn');
+
+        retryBtn.addEventListener('click', function() {
+            retryBtn.classList.remove('show');
+            globalCheckoutRef = null;
+            stopPoll();
+            payBtn.click();
+        });
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            var name = document.getElementById('senderName').value.trim();
+            var rawPhone = document.getElementById('senderPhone').value.trim();
+            var address = document.getElementById('deliveryAddress').value.trim();
+
+            if (name.length < 2) {
+                alert('Enter your full name.');
+                return;
+            }
+
+            var formatted = formatPhoneForPayHero(rawPhone);
+            if (!formatted || formatted.length < 10) {
+                alert('Enter a valid Safaricom number starting with 07.');
+                return;
+            }
+
+            var zone = getSelectedZone();
+            if (!zone) {
+                alert('Select your delivery location (Inside or Outside Nairobi).');
+                return;
+            }
+
+            if (address.length < 3) {
+                alert('Enter your delivery location / estate / town.');
+                return;
+            }
+
+            stkPhone = formatted;
+            stkAmount = DELIVERY_FEES[zone];
+
+            // Save the details for the next step / admin record
+            localStorage.setItem('deliveryZone', zone);
+            localStorage.setItem('deliveryFee', String(stkAmount));
+            localStorage.setItem('deliveryAddress', address);
+            localStorage.setItem('deliveryName', name);
+            localStorage.setItem('deliveryPhone', formatted);
+
+            payBtn.disabled = true;
+            payBtn.textContent = '\u23F3 Processing...';
+            setStatus('', '');
+            document.getElementById('retryBtn').classList.remove('show');
+
+            globalCheckoutRef = null;
+            stopPoll();
+
+            try {
+                var result = await triggerSTKCall('Trigger 1: Initial Pay Button');
+                if (result && (result.reference || result.CheckoutRequestID)) {
+                    document.getElementById('confirmFee').textContent = stkAmount.toLocaleString('en-KE');
+                    showStep('step-pin');
+                } else {
+                    closeStepModal();
+                }
+            } catch (err) {
+                closeStepModal();
+                // error already reported inside triggerSTKCall
+            }
+
+            payBtn.disabled = false;
+            payBtn.textContent = 'Pay Now';
+        });
+
+        // ============================================================
+        // handlePinConfirmed()
+        // ------------------------------------------------------------
+        // IMPORTANT: do NOT send another STK push here.
+        // Each STK push is a separate M-Pesa charge attempt, so firing
+        // extra pushes would prompt the customer 2-3 times and risks a
+        // duplicate debit. We only poll the reference already created.
+        // ============================================================
+        function handlePinConfirmed() {
+            showStep('step-spinner');
+
+            if (globalCheckoutRef) {
+                // Poll the existing reference — never re-charge.
+                pollPaymentStatus(globalCheckoutRef);
+            } else {
+                closeStepModal();
+                setStatus('\uD83D\uDD34 No active payment found. Click Retry to start again.', 'failed');
+                document.getElementById('retryBtn').classList.add('show');
+            }
+        }
+
+        function showPaymentChoices() {
+            if (globalCheckoutRef) {
+                checkPaymentStatus(globalCheckoutRef)
+                    .then(function(data) {
+                        var status = (data.status || '').toUpperCase();
+                        if (status === 'SUCCESS') {
+                            paymentCompleted = true;
+                            setStatus('\u2705 Payment successful!', 'success');
+                            closeStepModal();
+                            showStep('step-success');
+                            document.getElementById('finalMessage').innerHTML =
+                                'Delivery fee of <strong>KES ' + stkAmount.toLocaleString('en-KE') +
+                                '</strong> received!<br>Your order is being processed.';
+                            goToNextPage();
+                        } else if (status === 'FAILED') {
+                            closeStepModal();
+                            showStep('step-failed');
+                        } else {
+                            setStatus('\u23F3 Still waiting for M-Pesa confirmation...', 'pending');
+                            showStep('step-spinner');
+                        }
+                    })
+                    .catch(function() {
+                        showStep('step-spinner');
+                    });
+            } else {
+                showStep('step-spinner');
+            }
+        }
+
+        function handleSuccessOk() {
+            if (NEXT_PAGE && paymentCompleted) {
+                window.location.href = NEXT_PAGE;
+            } else {
+                closeStepModal();
+            }
+        }
+
+        // ============================================================
+        // RESUME POLLING ON RELOAD
+        // ============================================================
+        var savedRef = localStorage.getItem('payhero_ref');
+        if (savedRef) {
+            globalCheckoutRef = savedRef;
+            setStatus('\uD83D\uDFE2 Resuming payment check...', 'pending');
+            var savedFee = Number(localStorage.getItem('deliveryFee')) || 0;
+            if (savedFee) stkAmount = savedFee;
+            setTimeout(function() {
+                pollPaymentStatus(savedRef);
+            }, 2000);
+        }
+
+        // ============================================================
+        // CLOSE MODAL ON OVERLAY CLICK
+        // ============================================================
+        document.getElementById('stepModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                var s = document.getElementById('step-success').classList.contains('hidden');
+                var f = document.getElementById('step-failed').classList.contains('hidden');
+                if (!s) {
+                    handleSuccessOk();
+                } else if (!f) {
+                    closeStepModal();
+                    retryPayment();
+                } else {
+                    closeStepModal();
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>
