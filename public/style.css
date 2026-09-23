@@ -1,0 +1,103 @@
+body {
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+    color: #fff;
+    background-color: #006400;
+    /* Deep green background */
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    width: 90%;
+    margin: 20px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #000;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+input,
+select,
+button {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background-color: #0a6ebd;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #084a87;
+}
+
+.header-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.comments-box {
+    height: 220px;
+    overflow: hidden;
+    background: #f5f5f5;
+    color: #000;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.comment {
+    margin-bottom: 12px;
+}
+
+.comment span {
+    color: gray;
+    font-size: 14px;
+}
+
+
+/* ================================
+   NYOTA PROCESSING POPUP (LOGO)
+   ================================ */
+
+.nyota-seal {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    background: #ffffff;
+    border-radius: 50%;
+    border: 2px solid #c9a227;
+    /* gold ring */
+    padding: 6px;
+}
+
+
+/* Optional: card look for the popup */
+
+.nyota-card {
+    background: #ffffff;
+    color: #000;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    margin: auto;
+}
