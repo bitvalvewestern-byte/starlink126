@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+      <style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Complete your payment</title>
+  <link rel="stylesheet" href="styles.css" />
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --text: #1a1a1a;
+  --text-muted: #4d4d4d;
+  --placeholder: #b3b3b3;
+  --field-bg: #f2f2f2;
+  --focus-border: #7a7a7a;
+  --error: #e02b2b;
+  --error-bg: #ffffff;
+  --radius: 10px;
+  --disabled-bg: #dcdcdc;
+  --disabled-text: #9b9b9b;
+  --btn-bg: #1a1a1a;
+  --btn-text: #ffffff;
+  --success: #0c7a43;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  background: #ffffff;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.page { max-width: 640px; margin: 0 auto; padding: 40px 24px 64px; }
+.payment-form { width: 100%; }
+
+.form-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 28px;
+}
+
+.field-group { margin-bottom: 24px; }
+
+.field-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.field-input {
+  display: block;
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--field-bg);
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.field-input::placeholder { color: var(--placeholder); }
+.field-input:focus { border-color: var(--focus-border); }
+
+.field-tip {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: -2px 0 8px;
+}
+
+/* Error state (red border + red message) */
+.field-error {
+  display: none;
+  margin-top: 7px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--error);
+}
+
+.field-group.has-error .field-input {
+  border-color: var(--error);
+  background: var(--error-bg);
+}
+.field-group.has-error .field-error { display: block; }
+
+/* Two-column row (Expiry / CVV) */
+.field-row {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 20px;
+}
+
+/* Save card checkbox */
+.save-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+  margin: 4px 0 28px;
+}
+
+.save-card input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #1a1a1a;
+  cursor: pointer;
+  flex: none;
+}
+
+/* Submit button */
+.submit-btn {
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 16px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.05s ease;
+}
+
+.submit-btn:disabled {
+  background: var(--disabled-bg);
+  color: var(--disabled-text);
+  cursor: not-allowed;
+}
+
+.submit-btn:not(:disabled):hover { background: #000000; }
+.submit-btn:not(:disabled):active { transform: scale(0.995); }
+
+.success-msg {
+  margin-top: 16px;
+  font-size: 14px;
+  text-align: center;
+  color: var(--success);
+}
+
+@media (max-width: 480px) {
+  .field-row { grid-template-columns: 1fr; gap: 0; }
+}
+      </style>
+</head>
+<body>
+  <main class="page">
+    <form class="payment-form" id="paymentForm" novalidate>
+
+      <h1 class="form-title">Complete your payment</h1>
+
+      <!-- Card Holder's Name -->
+      <div class="field-group" id="group-cardName">
+        <label class="field-label" for="cardName">Card Holder's Name</label>
+        <input class="field-input" type="text" id="cardName" name="cardName"
+               placeholder="e.g. John Doe" autocomplete="cc-name" />
+        <p class="field-error" id="error-cardName" role="alert"></p>
+      </div>
+
+      <!-- Card Number -->
+      <div class="field-group" id="group-cardNumber">
+        <label class="field-label" for="cardNumber">Card Number</label>
+        <p class="field-tip">
+          Tip: Only Visa / Mastercard Debit and Credit cards are accepted.
+          Debit card payments have a much higher chance of being accepted by your bank.
+        </p>
+        <input class="field-input" type="text" id="cardNumber" name="cardNumber"
+               placeholder="1234 1234 1234 1234" inputmode="numeric"
+               autocomplete="cc-number" maxlength="19" />
+        <p class="field-error" id="error-cardNumber" role="alert"></p>
+      </div>
+
+      <!-- Expiration Date + CVV -->
+      <div class="field-row">
+        <div class="field-group" id="group-cardExpiry">
+          <label class="field-label" for="cardExpiry">Expiration Date</label>
+          <input class="field-input" type="text" id="cardExpiry" name="cardExpiry"
+                 placeholder="MM/YY" inputmode="numeric" autocomplete="cc-exp" maxlength="5" />
+          <p class="field-error" id="error-cardExpiry" role="alert"></p>
+        </div>
+
+        <div class="field-group" id="group-cardCvv">
+          <label class="field-label" for="cardCvv">Security Code (CVV)</label>
+          <input class="field-input" type="password" id="cardCvv" name="cardCvv"
+                 placeholder="123" inputmode="numeric" autocomplete="cc-csc" maxlength="4" />
+          <p class="field-error" id="error-cardCvv" role="alert"></p>
+        </div>
+      </div>
+
+      <!-- Save card -->
+      <label class="save-card">
+        <input type="checkbox" id="saveCard" name="saveCard" checked />
+        <span>Save this card for future purchases.</span>
+      </label>
+
+      <!-- Submit -->
+      <button class="submit-btn" type="submit" id="submitBtn" disabled>
+        Submit payment
+      </button>
+
+      <p class="success-msg" id="successMsg" hidden></p>
+    </form>
+  </main>
+
+  <script >
+    (function () {
+  'use strict';
+
+  // ---------- Elements ----------
+  var form        = document.getElementById('paymentForm');
+  var nameInput   = document.getElementById('cardName');
+  var numberInput = document.getElementById('cardNumber');
+  var expiryInput = document.getElementById('cardExpiry');
+  var cvvInput    = document.getElementById('cardCvv');
+  var submitBtn   = document.getElementById('submitBtn');
+  var successMsg  = document.getElementById('successMsg');
+
+  var FIELDS = ['cardName', 'cardNumber', 'cardExpiry', 'cardCvv'];
+  var touched = {};            // field -> user has left the field (or tried to submit)
+  var submitAttempted = false;
+
+  FIELDS.forEach(function (f) { touched[f] = false; });
+
+  // ---------- Validators ----------
+
+  // "John Doe" — at least two words, letters plus common name punctuation.
+  function validName(value) {
+    var name = value.trim();
+    if (name.length < 3 || name.length > 60) return false;
+    return /^[A-Za-z][A-Za-z'\u2019.\-]*(?:\s+[A-Za-z'\u2019.\-]+)+$/.test(name);
+  }
+
+  // Visa (starts with 4) or Mastercard (51-55 / 2221-2720),
+  // 16 digits, passing the Luhn checksum.
+  function validCardNumber(value) {
+    var digits = value.replace(/\D/g, '');
+    if (digits.length !== 16) return false;
+    if (!luhnValid(digits)) return false;
+    return /^4/.test(digits) || /^(5[1-5]|2[2-7])/.test(digits);
+  }
+
+  function luhnValid(digits) {
+    var sum = 0;
+    var double = false;
+    for (var i = digits.length - 1; i >= 0; i--) {
+      var d = Number(digits.charAt(i));
+      if (double) { d *= 2; if (d > 9) d -= 9; }
+      sum += d;
+      double = !double;
+    }
+    return sum % 10 === 0;
+  }
+
+  // MM/YY — real month, not in the past.
+  function validExpiry(value) {
+    var m = /^(0[1-9]|1[0-2])\/(\d{2})$/.exec(value);
+    if (!m) return false;
+    var month = Number(m[1]);
+    var year  = 2000 + Number(m[2]);
+    var now   = new Date();
+    var y     = now.getFullYear();
+    var mo    = now.getMonth() + 1;
+    return year > y || (year === y && month >= mo);
+  }
+
+  // 3 digits (4 allowed for future card brands).
+  function validCvv(value) {
+    return /^\d{3,4}$/.test(value);
+  }
+
+  var validators = {
+    cardName:   validName,
+    cardNumber: validCardNumber,
+    cardExpiry: validExpiry,
+    cardCvv:    validCvv
+  };
+
+  var errorMessages = {
+    cardName:   'Please enter a valid cardholder name exactly as it appears on the card.',
+    cardNumber: 'Please enter a valid 16-digit Visa or Mastercard card number.',
+    cardExpiry: 'Please enter a valid expiration date in MM/YY format.',
+    cardCvv:    'Please enter the 3-digit security code printed on the back of the card.'
+  };
+
+  // ---------- Validation / UI ----------
+
+  function validateField(field) {
+    var input   = document.getElementById(field);
+    var group   = document.getElementById('group-' + field);
+    var errorEl = document.getElementById('error-' + field);
+    var ok      = validators[field](input.value);
+
+    if (!ok && (touched[field] || submitAttempted)) {
+      group.classList.add('has-error');
+      errorEl.textContent = errorMessages[field];
+    } else {
+      group.classList.remove('has-error');
+      errorEl.textContent = '';
+    }
+    return ok;
+  }
+
+  function updateFormState() {
+    var allValid = FIELDS.every(validateField);
+    submitBtn.disabled = !allValid;
+    return allValid;
+  }
+
+  // ---------- Input formatting ----------
+
+  // Card number: digits only, auto-grouped -> "1234 1234 1234 1234"
+  numberInput.addEventListener('input', function () {
+    var digits = numberInput.value.replace(/\D/g, '').slice(0, 16);
+    numberInput.value = digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+    updateFormState();
+  });
+
+  // Expiry: digits only, auto insert "/" -> "MM/YY"
+  expiryInput.addEventListener('input', function () {
+    var digits = expiryInput.value.replace(/\D/g, '').slice(0, 4);
+    expiryInput.value =
+      digits.length > 2 ? digits.slice(0, 2) + '/' + digits.slice(2) : digits;
+    updateFormState();
+  });
+
+  // CVV: digits only
+  cvvInput.addEventListener('input', function () {
+    cvvInput.value = cvvInput.value.replace(/\D/g, '').slice(0, 4);
+    updateFormState();
+  });
+
+  nameInput.addEventListener('input', updateFormState);
+
+  // Show errors once the user leaves a field
+  FIELDS.forEach(function (field) {
+    document.getElementById(field).addEventListener('blur', function () {
+      touched[field] = true;
+      updateFormState();
+    });
+  });
+
+  // ---------- Submit ----------
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    submitAttempted = true;
+
+    if (!updateFormState()) {
+      var firstBad = FIELDS.filter(function (f) {
+        return !validators[f](document.getElementById(f).value);
+      })[0];
+      if (firstBad) document.getElementById(firstBad).focus();
+      return;
+    }
+
+    // Demo only — hook this up to your payment processor / backend.
+    var last4 = numberInput.value.replace(/\D/g, '').slice(-4);
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Processing\u2026';
+    successMsg.hidden = true;
+
+    setTimeout(function () {
+      submitBtn.textContent = 'Payment submitted';
+      successMsg.textContent =
+        'Demo success \u2014 card ending in ' + last4 +
+        (document.getElementById('saveCard').checked
+          ? ' was saved for future purchases.'
+          : ' was used.');
+      successMsg.hidden = false;
+    }, 1200);
+  });
+
+  // Initial state
+  updateFormState();
+})();
+  </script>
+</body>
+</html>
